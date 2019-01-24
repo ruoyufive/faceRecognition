@@ -16,8 +16,8 @@ from keras import backend as K
 
 img_rows = 250  # 图像行数
 img_cols = 250  # 图像列数
-batchSize = 500  # 批处理数量
-epochs = 10  # 训练次数
+batchSize =1000  # 批处理数量
+epochs = 40  # 训练次数
 
 historyName = './TestPics/Plt/history_1.png'
 modelWeightName = './TestPics/Plt/modelweight.h5'
@@ -89,33 +89,33 @@ def load_data(dirPath):
 def set_model(learnRate=0.005, decay=1e-6, momentum=0.9):
     model = Sequential()
     if K.image_data_format() == 'channels_first':
-        model.add(Conv2D(32, kernel_size=(3, 3), input_shape=(1, img_rows, img_cols)))
+        model.add(Conv2D(5, kernel_size=(3, 3), input_shape=(1, img_rows, img_cols)))
     else:
-        model.add(Conv2D(32, kernel_size=(3, 3), input_shape=(img_rows, img_cols, 1)))
+        model.add(Conv2D(5, kernel_size=(3, 3), input_shape=(img_rows, img_cols, 1)))
 
-    model.add(Activation('relu'))
+    model.add(Activation('tanh'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    model.add(Conv2D(32, kernel_size=(3, 3)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # model.add(Conv2D(32, kernel_size=(3, 3)))
+    # model.add(Activation('relu'))
+    # model.add(MaxPooling2D(pool_size=(2, 2)))
+    #
+    # model.add(Conv2D(64, kernel_size=(3, 3)))
+    # model.add(Activation('relu'))
+    # model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    model.add(Conv2D(64, kernel_size=(3, 3)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(5, kernel_size=(3, 3)))
+    model.add(Activation('tanh'))
+    model.add(MaxPooling2D(pool_size=(3, 3)))
 
-    model.add(Conv2D(64, kernel_size=(3, 3)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.1))
     model.add(Flatten())
     model.add(Dense(128))  # Full connection
 
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
+    model.add(Activation('tanh'))
+    model.add(Dropout(0.1))
     model.add(Dense(2))
-    model.add(Activation('sigmoid'))
+    model.add(Activation('softmax'))
 
 
     sgd = SGD(lr=learnRate, decay=decay, momentum=momentum, nesterov=True)
@@ -127,7 +127,7 @@ def train_model(model, X_train, Y_train, X_val, Y_val, molWeightPath):
     history = model.fit(X_train, Y_train, batch_size=batchSize, epochs=epochs,
                         verbose=1, validation_data=(X_val, Y_val))
     model.save_weights(molWeightPath, overwrite=True)
-    show_train_data(history, historyName)
+    #show_train_data(history, historyName)
     return model
 
 
